@@ -221,7 +221,7 @@ h6{
 }
 
 #content{
-	width: 780px;
+	width: 700px;
 	overflow: hidden;
 	/*margin-right: 30px;*/
 	/*float: left;*/
@@ -236,6 +236,9 @@ h6{
         margin-right: 15px;
          /* END*/    
 	overflow: hidden;
+        border-left: 1px dotted #C0C0C0;
+        border-bottom: 1px dotted #C0C0C0;
+        margin-bottom:  10px;
 }
 
 /*===== Images =====*/
@@ -565,7 +568,7 @@ h6{
 
 .primary-menu {
 	/*width: 100%; yezan edit*/
-        width: 1110px;
+        width: 960px;
 	background: #414140;
 	position: relative;
 	display: block;
@@ -576,7 +579,7 @@ h6{
 }
 
 .primary-menu ul {
-	float: left;
+	float: right; /* yezan edit : old value float : right*/
 	list-style: none;
 	margin: 0px;
 	padding: 0px;
@@ -2367,7 +2370,7 @@ h6{
 	
 	#content {
 		margin-right: 20px;
-		width: 640px;
+		/*width: 640px;*/
 	}
 			
 	.attachment-fp780_400{
@@ -3082,3 +3085,44 @@ a > .category.category-culture_art
 {
     margin-top: 15px;
 }
+
+.bw_video_widget
+{
+    height: 675px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.bw-video-sidebar-iframe
+{
+    float: right;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding-left: 5px;
+}
+.bwv_video_container_clear
+{
+    clear:both;
+}
+
+.bwv_videocaption
+{
+    text-align: right;
+    font-size: 15px;
+    font-weight: bold;
+    border-top:1px solid #C0C0C0; 
+}
+.bwv_videocaption_top
+{
+    float:right;
+    border-top: none;
+}
+
+
+.bwv_videocaption p
+{
+   /* white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis; */
+}
+

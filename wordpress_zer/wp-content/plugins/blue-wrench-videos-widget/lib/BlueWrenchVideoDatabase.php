@@ -79,7 +79,7 @@ if(!class_exists('BlueWrenchVideoDatabase')){
 	        return '<em>Unknown</em>';
 		}
 
-		public function column_title($item){
+	    public function column_title($item){
 			// links going to /admin.php?page=[your_plugin_page][&other_params]
 			// notice how we used $_REQUEST['page'], so action will be done on curren page
 			// also notice how we use $this->_args['singular'] so in this example it will
@@ -128,6 +128,57 @@ if(!class_exists('BlueWrenchVideoDatabase')){
 			);
 
 		}
+                
+            public function column_category($item)
+            {
+               // links going to /admin.php?page=[your_plugin_page][&other_params]
+			// notice how we used $_REQUEST['page'], so action will be done on curren page
+			// also notice how we use $this->_args['singular'] so in this example it will
+			// be something like &person=2
+			/*
+			$actions = array(
+				'edit' => sprintf('<a href="?page=%s&id=%s">%s</a>', BlueWrenchVideoConstants::BW_MANAGE_VIDEOS_PAGE, $item['id'], __('Edit', 'bluewrench-video-widget')),
+				'delete' => sprintf('<a href="?page=%s&action=delete&id=%s">%s</a>', $_REQUEST['page'], $item['id'], __('Delete', 'bluewrench-video-widget')),
+			);
+			*/
+			//return $item['title'];
+			/*
+			return sprintf('%s %s',
+				$item['title'],
+				$this->row_actions($actions)
+			);
+			*/
+
+			if ($item['post_status']=="publish"){
+		        $visibility = "hide";
+		        $visibilityText = "Hide in Widget";
+				$category = $item['category'];
+			}else if ($item['post_status']=="draft"){
+				$category = '<em>'.$item['category'].'</em>';
+		        $visibility = "show";
+		        $visibilityText = "Show in Widget";
+			}
+
+
+			$video_preview = "<div style='height:".$this->bwVideoController->videoheight."px; width:".$this->bwVideoController->videowidth."px'><img style='margin-top:".intval($this->bwVideoController->videoheight/2-11)."px; margin-left:".intval($this->bwVideoController->videowidth/2-11)."px;' src='".plugins_url( '/bluewrench-video-widget/images/ajax-loader.gif' )."'></div>";
+
+			$actions = array(
+				'edit' => sprintf('<a href="?page=%s&id=%s">%s</a>', BlueWrenchVideoConstants::BW_MANAGE_VIDEOS_PAGE, $item['id'], __('Edit', 'bluewrench-video-widget')),
+				'delete' => sprintf('<a href="?page=%s&action=delete&id=%s">%s</a>', $_REQUEST['page'], $item['id'], __('Delete', 'bluewrench-video-widget')),
+				'preview_video' => sprintf('<a href="javascript: void(0);" onclick="javascript: bw_slideToggle(%s);">%s</a>', $item['id'], __('Preview', 'bluewrench-video-widget')),
+				'visibility' => sprintf('<a href="?page='.$_REQUEST['page'].'&action='.$visibility.'&id='.$item['id'].'">'.__($visibilityText, 'bluewrench-video-widget').'</a>'),
+				//'move_up' => sprintf('<a href="?page='.$_REQUEST['page'].'&action=move_up&id='.$item['id'].'">'.__('Move Up', 'bluewrench-video-widget').'</a>'),
+				//'move_down' => sprintf('<a href="?page='.$_REQUEST['page'].'&action=move_down&id='.$item['id'].'">'.__('Move Down', 'bluewrench-video-widget').'</a>'),
+			);
+
+			$value =  $item['category'].'<div class="bw_preview_container" id="prev_'.$item['id'].'" style="display:none;">'.$video_preview.'</div>';
+
+			return sprintf('%s %s',
+				$category,
+				$this->row_actions($actions)
+			); 
+            }
+               
 	    public function column_cb($item){
 			return sprintf(
 				'<input type="checkbox" name="id[]" value="%s" />',
@@ -141,6 +192,7 @@ if(!class_exists('BlueWrenchVideoDatabase')){
 				'title' => __('Title', 'bluewrench-video-widget'),
 				'url' => __('Video (URL)', 'bluewrench-video-widget'),
 				'visibility' => __('Visibility', 'bluewrench-video-widget'),
+                                'category' => __('Category', 'bluewrench-video-widget')
 			);
 			return $columns;
 		}
@@ -150,6 +202,7 @@ if(!class_exists('BlueWrenchVideoDatabase')){
 				'title' => array('title', true),
 				'url' => array('value', false),
 				'visibility' => array('post_status', false),
+                                 'category' => array('category', true)
 			);
 			return $sortable_columns;
 		}

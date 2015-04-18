@@ -283,7 +283,8 @@
 	
 	<div id="container" class="hfeed">
             <?php
-		if (is_page_template('page-home.php')&& ($paged < 2 )){
+               
+		if ( (is_page_template('page-home.php')  ) && ($paged < 2 ) ){
 		
 			//include slider
                         
@@ -291,5 +292,7 @@
 				get_template_part( 'includes/slider' );
 			}
                 }
+                
+                
                ?>
 	<div id="main">	

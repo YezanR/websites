@@ -84,6 +84,7 @@ if( !class_exists('BlueWrenchVideoAdmin')) {
 				'value' => '',
 				'sortorder' => 9999,
 				'dateadded' => current_time( 'mysql' ),
+                                'category'  => 'uncategorized',
 				'post_status' => 'publish',
 			);
 
@@ -217,6 +218,14 @@ if( !class_exists('BlueWrenchVideoAdmin')) {
 					
 					</div>
 
+				</td>
+			</tr>
+                        <tr class="form-field">
+				<th valign="top" scope="row">
+					<label for="bw_category"><?php _e('Video Category', 'bluewrench-video-widget')?></label>
+				</th>
+				<td>
+					<input id="bw_category" name="category" maxlength="75" type="text" style="width: 95%" value="<?php echo esc_attr($item['category'])?>" size="70" class="code" placeholder="<?php _e('Video Category is optional', 'bluewrench-video-widget')?>">
 				</td>
 			</tr>
 			</tbody>

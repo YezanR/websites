@@ -7,7 +7,7 @@ if( !class_exists('BlueWrenchVideoWidget')) {
 		private static $instance ;
 		public function __construct(){
 			$widget_ops = array( 'classname' => 'bw_video_widget', 'description' => __('Blue Wrench Video Widget to display videos from various video sharing networks', 'bw_video_widget') );
-			$control_ops = array( 'width' => 200, 'height' => 350, 'id_base' => 'bw_video_widget' );
+			$control_ops = array( 'title' => "Videos" , 'width' => 200, 'height' => 350, 'id_base' => 'bw_video_widget' );
 			$this->WP_Widget( 'bw_video_widget', __('Blue Wrench Video Widget', 'bw_video_widget'), $widget_ops, $control_ops );
 			add_action('wp_enqueue_scripts', array(&$this, 'js'));
 		}
@@ -25,14 +25,31 @@ if( !class_exists('BlueWrenchVideoWidget')) {
 		}
 		function widget( $args, $instance ) {		//function to echo out widget on sidebar
 			extract( $args );
+                        
 			$showcaption	= $instance['bwv_showcaption'];
 			echo $before_widget;
 			$videowidth	= $instance['bwv_width'];
 			$videoheight	= $instance['bwv_height'];
 			$layout		= $instance['bwv_layout'];
+                        $title = apply_filters( 'widget_title', empty( $instance['title'] ) ? __( 'Pages' ) : $instance['title'], $instance, $this->id_base );
+                       
 			global $wpdb;
-			$table_name = $wpdb->prefix.BlueWrenchVideoConstants::BW_TABLE_PREFIX."videos";
-			$sql = "SELECT * FROM ".$table_name." where post_status = 'publish' order by sortorder desc";
+			$table_name = $wpdb->prefix.BlueWrenchVideoConstants::BW_TABLE_PREFIX."videos";     
+                        $cat_name = wp_title('', false); // get page title, for us it means, get category of the current page    
+                        if ( empty($cat_name) ) {
+                            $sql = "SELECT * FROM ".$table_name." where post_status = 'publish' order by sortorder desc";
+                        }
+                        else
+                        {
+     
+                            $sql = "SELECT * FROM ".$table_name." where post_status = 'publish' AND category = '". trim($cat_name)."' order by sortorder desc";
+                        }
+                        
+                        //var_dump($sql);die;
+                        if ($title )
+                        {
+                            echo $before_title . $title . $after_title;
+                        }
 			$results = $wpdb->get_results($sql);
 			if(count($results) > 0){
 				$rowCount		= 0;
@@ -43,13 +60,26 @@ if( !class_exists('BlueWrenchVideoWidget')) {
 					$videoCaption	= $video->title;
 					$videoURL		= $video->value;
 					//p($videoURL);
-					$video_html		= $bwVideoController->generateEmbeddHTML($videoURL, false);
-					echo "<div class=\"bwv_video_container bwv_{$layout}_layout\">";
-					echo $video_html;
-					if($showcaption){
+					$video_html		= $bwVideoController->generateEmbeddHTML($videoURL, $rowCount, false);
+                                        $clearClass = $rowCount != 0 ? "bwv_video_container_clear": ""; 
+                         
+					echo "<div class=\"bwv_video_container bwv_{$layout}_layout ".$clearClass."\">";
+					if ( $rowCount == 0)
+                                        {
+                                            if($showcaption){
+						echo "<div class=\"bwv_videocaption bwv_videocaption_top\"><p>$videoCaption</p></div>";
+                                            }
+                                            echo $video_html;
+                                        }
+                                        else
+                                        {
+                                            
+                                            echo $video_html;
+                                            if($showcaption){
 						echo "<div class=\"bwv_videocaption\"><p>$videoCaption</p></div>";
-					}
-					echo "</div>";
+                                            }
+                                        }
+                                        $rowCount++;
 				}
 			}
 			echo $after_widget;
@@ -62,17 +92,27 @@ if( !class_exists('BlueWrenchVideoWidget')) {
 			$instance['bwv_height'] = strip_tags( $new_instance['bwv_height'] );
 			$instance['bwv_showcaption'] = $new_instance['bwv_showcaption'];
 			$instance['bwv_layout'] = $new_instance['bwv_layout'];
+                        $instance['title'] = $new_instance['title'];
+                        
 			return $instance;
 		}//end of function update
 
 		//function to create Widget Admin form
 		function form($instance) {
-			$instance = wp_parse_args( (array) $instance, array( 'bwv_width' => '285', 'bwv_height' => '200', 
+			$instance = wp_parse_args( (array) $instance, array( 'title' => 'Videos',  'bwv_width' => '285', 'bwv_height' => '200', 
 			'bwv_showcaption' => 'Yes', 'bwv_layout' => 'grid') );
 			$instance['bwv_width'] = strip_tags( $instance['bwv_width'] );
 			$instance['bwv_height'] = strip_tags( $instance['bwv_height'] );
+                        $instance['title'] = strip_tags( $instance['title'] );
+                        
 			$br_nonce = wp_create_nonce( 'br_nonce' );
 		?>
+                        
+			<p>
+				<label for="<?php echo $this->get_field_id('title'); ?>">Widget Title: </label>
+				<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" 
+				name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $instance['title']; ?>" />
+			</p>
 			<p>
 				<label for="<?php echo $this->get_field_id('bwv_width'); ?>">Video Width: </label>
 				<input class="widefat" id="<?php echo $this->get_field_id('bwv_width'); ?>" 

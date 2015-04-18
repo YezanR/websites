@@ -252,7 +252,7 @@ if(!class_exists('BlueWrenchVideoController')){
 			}
 			return false;
 		}
-		public function generateEmbeddHTML($video_url='', $display_errors=true){
+		public function generateEmbeddHTML($video_url='', $rowCount, $display_errors=true){
 			$network = 'unknown';
 			if ($video_url!="" && function_exists("parse_url")){
 				if ($video_url != esc_url($video_url)){
@@ -272,7 +272,10 @@ if(!class_exists('BlueWrenchVideoController')){
 					switch($host){
 						case 'youtu.be':
 						case 'www.youtube.com':
-							$video_url = $url_chunks['scheme'].'://www.youtube.com/embed'.$url_chunks['path'];
+                                                        
+                                                        $url_parts = explode('=', $url_chunks['query']);
+                                                        //var_dump($url_parts[1]);die;
+							$video_url = $url_chunks['scheme'].'://www.youtube.com/embed/'.$url_parts[1];
 							$network = 'youtube';
 							break;
 						case 'player.vimeo.com':
@@ -429,29 +432,33 @@ if(!class_exists('BlueWrenchVideoController')){
 			}else{
 				die("parse_url error");
 			}
-			$videowidth = (($this->videowidth>0) ? $this->videowidth : 248);
-			$videoheight = (($this->videoheight>0) ? $this->videoheight : 150);
+                        if ( $rowCount != 0) {
+                            $this->videowidth = 0;$this->videoheight=0;
+                        }
+			$videowidth = (($this->videowidth>0) ? $this->videowidth : 148); // 248
+			$videoheight = (($this->videoheight>0) ? $this->videoheight : 89); // 150
+                        
 			switch ($network){
 				case 'vimeo':
-					$video_preview = '<iframe src="'.$video_url.'" width="'.$videowidth.'" height="'.$videoheight.'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>';
+					$video_preview = '<iframe src="'.$video_url.'" width="'.$videowidth.'" height="'.$videoheight.'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen class="bw-video-sidebar-iframe"></iframe>';
 					break;
 				case 'metacafe':
 				case 'break':
 				case 'liveleak.com':
 				case 'videojug':
-					$video_preview = '<iframe src="'.$video_url.'" width="'.$videowidth.'" height="'.$videoheight.'" frameborder="0" webkitAllowFullScreen allowFullScreen></iframe>';
+					$video_preview = '<iframe src="'.$video_url.'" width="'.$videowidth.'" height="'.$videoheight.'" frameborder="0" webkitAllowFullScreen allowFullScreen class="bw-video-sidebar-iframe"></iframe>';
 					break;
 				case 'blip.tv':
-					$video_preview = '<iframe src="'.$video_url.'" width="'.$videowidth.'" height="'.$videoheight.'" frameborder="0" allowfullscreen></iframe><embed type="application/x-shockwave-flash" src="'.$video_url.'" style="display:none"></embed>';
+					$video_preview = '<iframe src="'.$video_url.'" width="'.$videowidth.'" height="'.$videoheight.'" frameborder="0" allowfullscreen></iframe><embed type="application/x-shockwave-flash" src="'.$video_url.'" style="display:none" class="bw-video-sidebar-iframe"></embed>';
 					break;
 				case 'www.mefeedia.com':
-					$video_preview = '<iframe src="'.$video_url.'?iframe=1&w='.$videowidth.'&h='.$videoheight.'&autoplay=0" width="'.($videowidth+16).'" height="'.($videoheight+16).'" frameborder="0" scrolling="no" webkitAllowFullScreen allowFullScreen></iframe>';
+					$video_preview = '<iframe src="'.$video_url.'?iframe=1&w='.$videowidth.'&h='.$videoheight.'&autoplay=0" width="'.($videowidth+16).'" height="'.($videoheight+16).'" frameborder="0" scrolling="no" webkitAllowFullScreen allowFullScreen class="bw-video-sidebar-iframe"></iframe>';
 					break;
 				case 'veoh':
-					$video_preview = '<object width="'.$videowidth.'" height="'.($videoheight+52).'" id="veohFlashPlayer" name="veohFlashPlayer"><param name="movie" value="http://www.veoh.com/swf/webplayer/WebPlayer.swf?version=AFrontend.5.7.0.1419&permalinkId='.$video_url.'&player=videodetailsembedded&videoAutoPlay=0&id=anonymous"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.veoh.com/swf/webplayer/WebPlayer.swf?version=AFrontend.5.7.0.1419&permalinkId='.$video_url.'&player=videodetailsembedded&videoAutoPlay=0&id=anonymous" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="'.$videowidth.'" height="'.($videoheight+52).'" id="veohFlashPlayerEmbed" name="veohFlashPlayerEmbed"></embed></object>';
+					$video_preview = '<object width="'.$videowidth.'" height="'.($videoheight+52).'" id="veohFlashPlayer" name="veohFlashPlayer"><param name="movie" value="http://www.veoh.com/swf/webplayer/WebPlayer.swf?version=AFrontend.5.7.0.1419&permalinkId='.$video_url.'&player=videodetailsembedded&videoAutoPlay=0&id=anonymous"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.veoh.com/swf/webplayer/WebPlayer.swf?version=AFrontend.5.7.0.1419&permalinkId='.$video_url.'&player=videodetailsembedded&videoAutoPlay=0&id=anonymous" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="'.$videowidth.'" height="'.($videoheight+52).'" id="veohFlashPlayerEmbed" name="veohFlashPlayerEmbed" class="bw-video-sidebar-iframe"></embed></object>';
 					break;
 				case 'yahoo':
-					$video_preview = '<iframe src="'.$video_url.'" width="'.$videowidth.'" height="'.$videoheight.'" frameborder="0" scrolling="no"></iframe>';
+					$video_preview = '<iframe src="'.$video_url.'" width="'.$videowidth.'" height="'.$videoheight.'" frameborder="0" scrolling="no" class="bw-video-sidebar-iframe"></iframe>';
 					break;
 				case 'revision3.com':
 				case 'collegehumor':
@@ -465,7 +472,7 @@ if(!class_exists('BlueWrenchVideoController')){
 					$video_preview = '<iframe src="'.$video_url.'" width="'.$videowidth.'" height="'.$videoheight.'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen scrolling="no"></iframe>';
 					break;
 				default:
-					$video_preview = '<iframe src="'.$video_url.'" width="'.$videowidth.'" height="'.$videoheight.'" frameborder="0"></iframe>';
+					$video_preview = '<iframe src="'.$video_url.'" width="'.$videowidth.'" height="'.$videoheight.'" frameborder="0" class="bw-video-sidebar-iframe "></iframe>';
 					break;
 			}
 			return $video_preview;

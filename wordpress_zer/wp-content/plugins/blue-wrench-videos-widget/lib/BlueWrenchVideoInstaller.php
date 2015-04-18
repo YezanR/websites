@@ -35,8 +35,9 @@ if(!class_exists('BlueWrenchVideoInstaller')){
 				sortorder int(3) NOT NULL DEFAULT  '9999',
 				dateadded datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 				post_status varchar(20) NOT NULL DEFAULT 'publish',
+                                category varchar(50) NOT NULL DEFAULT 'uncategorized',
 				UNIQUE KEY id (id)
-			);";
+			)ENGINE=InnoDB CHARACTER SET=utf8;";
 			$wpdb->query($structure);
 			add_option("Blue Wrench Video Widget Version", BlueWrenchVideoConstants::BW_VERSION_NUM);
 		}

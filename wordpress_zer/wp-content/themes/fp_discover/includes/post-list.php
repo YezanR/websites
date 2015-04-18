@@ -74,6 +74,7 @@
 						if ( $i % 2 == 1 ){
 							$post_class =" last";							
 						}
+                                               ;
                                         if ( $i == 1) get_sidebar();
 					?>								
 					<div class="one-half<?php echo $post_class; ?>">

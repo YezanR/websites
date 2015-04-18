@@ -1,0 +1,11 @@
+Edit:
+
+	Problem in plugin Blue Wrench :
+
+		In file lib/BlueWrenchVideoController.php 
+
+				- $url_chunks = parse_url($video_url);
+				- $url['path'] doesn't return the correct Video Id for youtube, 
+				  to solve this problem :
+						$url_parts = explode('=', $url_chunks['query']);
+						$ur_parts[1] now contains the correct video Id to embed the video in <iframe> tag

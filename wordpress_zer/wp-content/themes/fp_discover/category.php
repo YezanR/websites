@@ -27,7 +27,8 @@
 					$post_class ="";
 					if ( $i % 2 == 1 ){
 						$post_class =" last";
-					}					
+					}		
+                                        if ( $i == 1) get_sidebar();
 				?>								
 				<div class="one-half<?php echo $post_class; ?>">
 					<?php get_template_part( 'content', 'excerpt' ); ?>
